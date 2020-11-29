@@ -165,7 +165,6 @@ class CMPR(nn.Module):
         #print(sorted_PP)
 
 
-
     def reorder(self, order):
         new_F = []
         new_theta = []

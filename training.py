@@ -7,16 +7,22 @@ from tang_jcompneuro.model_fitting_cnn import (opt_configs_to_explore, models_to
 
 from util.fine_tune import fine_tune_all, test_FT
 
+opt_configs_to_explore['1e-2L2_1e-2L1_adam002_mse'] = {'conv': [{'l1': 0.0,
+                 'l2': 0.005,
+                 'l1_bias': 0.0,
+                 'l2_bias': 0.0}],
+               'fc': {'l1': 0.00003, 'l2': 0.005, 'l1_bias': 0.0, 'l2_bias': 0.0},
+               'loss': 'mse',
+               'optimizer': {'optimizer_type': 'adam',
+                'lr': 0.002}}
+
 def init_CNN(model:CNN, weight):
     t = torch.from_numpy(weight)
     t = t.type(torch.FloatTensor)
     t = nn.Parameter(t)
     model.conv_module_list[0].weight = t
-        
-    
-    #print(t.type())
-    #print(model.conv_module_list[0].weight.size())
     return model
+
 def train_one_model(neuron_idx, data, weight, opt_config_to_use = '1e-2L2_1e-2L2_adam002_mse',
                    model_config='b.24', first_layer_nolearning=False, batch_size = 128):
     # change num_channel to 9 for 9 channel CNN, etc.
@@ -37,15 +43,19 @@ def train_one_model(neuron_idx, data, weight, opt_config_to_use = '1e-2L2_1e-2L2
         #This is an indication of whether we use the fixed first layer.
         model = init_CNN(model, weight)
         
-    val_cc, y_test_hat, new_cc = train_one_case(model.cuda(), datasets_local,
+    y_val_cc, y_test_hat, new_cc = train_one_case(model, datasets_local,
                                                       opt_configs_to_explore[opt_config_to_use],
-                                                      seed=2, show_every=1000,
+                                                      seed=2, 
+                                                      show_every=100000,
                                                       return_val_perf=True,
-                                                      max_epoch=20000,first_layer_nolearning = first_layer_nolearning, batch_size = batch_size)
+                                                      max_epoch=10000,
+                                                      first_layer_nolearning=first_layer_nolearning)
     
-    print(val_cc)
+    y_test = y_val_.reshape(y_val_.shape[0],)
+    y_hat = y_test_hat.reshape(y_test_hat.shape[0],)
+    print(f"Testing correlation is {y_val_cc}")
     
-    return model,val_cc
+    return model, y_val_cc
 
 def train_one_NS(key, data_train, data_test, weight, num_channel = 24, lr = 1e-4, wd = 0, opt="Adam", max_epoch = 1000):
     #training NS data with top stimulus, then we must enforce batch_size equals to the whole training size. 

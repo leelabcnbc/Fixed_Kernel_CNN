@@ -57,7 +57,7 @@ def eval_func(model, loader, layer):
         return pearsonr(Y, Y_pred)[0]
 
 
-def train_one(model, data, max_iter = [100,70,50,25,10], epsilon = 1e-6, lr = 1e-3, wd=2e-5, show_every = 10):
+def train_one(model, data, max_iter = [30,30,20,15,10], epsilon = 1e-6, lr = 1e-3, wd=0, show_every = 10):
     """Note that in my PPR for Tang's data I only used the top stimulus so
        the batch is the entire data but if you want to use other dataset, 8k
        for example, you will need to write your own dataloader in pytorch.
@@ -74,8 +74,15 @@ def train_one(model, data, max_iter = [100,70,50,25,10], epsilon = 1e-6, lr = 1e
         best_valCC = 0
         best_conv = None #control overfitting using evaluation set
         best_theta = None
-        optimizer = optim.Adam([{'params': model.conv[layer].parameters()}, {'params': model.theta[layer]}], lr=lr, weight_decay=wd)
-        for j in range(max_iter[layer]):
+        if layer == 0:
+            optimizer = optim.Adam([{'params': model.conv[layer].parameters()}, {'params': model.theta[layer]}], lr=lr, weight_decay=wd)
+        else:
+            optimizer = optim.SGD([{'params': model.conv[layer].parameters()}, {'params': model.theta[layer]}], lr=lr, weight_decay=wd)
+        if layer >= len(max_iter):
+            max_iteration = 10
+        else:
+            max_iteration = max_iter[layer]
+        for j in range(max_iteration):
             epoch_loss = -100
             for X, y in train_loader:
                 X = Variable(X, requires_grad = False)

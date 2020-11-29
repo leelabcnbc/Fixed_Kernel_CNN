@@ -77,7 +77,7 @@ def train(model: nn.Module, loss_func, dataset_train, optimizer: optim.Optimizer
     """
 
     global_config_dict_default = {
-        'convert_data_to_gpu': True,
+        'convert_data_to_gpu': False,
         'loss_every_iter': 20,  # show loss every 20 iterations,
         'val_every': 1,
         'test_every': 1,
@@ -148,10 +148,10 @@ def eval_wrapper(model: nn.Module, dataset: DataLoader, send_to_gpu, eval_fn):
     outputs_all = []
     for i_minibatch, (inputs, labels) in enumerate(dataset):
         labels_all.append(labels.cpu().numpy().copy())
-        if send_to_gpu:
-            inputs = Variable(inputs.cuda())
-        else:
-            inputs = Variable(inputs)
+        #if send_to_gpu:
+            #inputs = Variable(inputs.cuda())
+        #else:
+        inputs = Variable(inputs)
         outputs = model(inputs).data.cpu().numpy()
         outputs_all.append(outputs.copy())
 
@@ -213,10 +213,10 @@ def train_one_phase(model, loss_func, dataset_train, optimizer: optim.Optimizer,
                 # double check that I'm training properly.
                 # in other words, I'm not doing dropout improperly.
                 assert model.training
-                if global_config_dict['convert_data_to_gpu']:
-                    inputs, labels = Variable(inputs.cuda()), Variable(labels.cuda())
-                else:
-                    inputs, labels = Variable(inputs), Variable(labels)
+                #if global_config_dict['convert_data_to_gpu']:
+                  #  inputs, labels = Variable(inputs.cuda()), Variable(labels.cuda())
+                #else:
+                inputs, labels = Variable(inputs), Variable(labels)
 
                 optimizer.zero_grad()
                 outputs = model(inputs)

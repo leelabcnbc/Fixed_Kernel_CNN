@@ -1,6 +1,7 @@
 import numpy as np
 import h5py
 import os
+from matplotlib import image
 import matplotlib.pyplot as plt
 from skimage import img_as_float
 from skimage.transform import downscale_local_mean
@@ -55,3 +56,22 @@ def prepare_dataset_pattern(monkey='A'):
         data_list[indx] = generate_CV(X, res_y)
     
     return data_list
+
+def prepare_dataset_pattern_demo():
+    X = np.zeros((9500, 40, 40))
+    for i in range(9500):
+        img = image.imread(f"./data/stimuli/{i+1}.png")
+        #extract the center 40x40
+        X[i,:,:] = np.asarray(img[80-20:80+20, 80-20:80+20])
+    #downscale the image to 20x20
+    X = 1-downscale_local_mean(X, (1, 2, 2))[:,np.newaxis]
+    demo_neurons = ["neu75", "neu255", "neu381", "neu504"]
+    data = dict()
+    for neu in demo_neurons:
+        y = np.load(f"./data/neurons/{neu}.npy")
+        data[neu] = generate_CV(X, y)
+
+    return data
+
+
+

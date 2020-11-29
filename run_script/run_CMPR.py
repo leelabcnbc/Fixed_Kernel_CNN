@@ -83,7 +83,11 @@ def train_one(model, data, max_iter = [100,70,50,25,10], epsilon = 1e-6, lr = 1e
         best_idx = None #control overfitting
         best_theta = None
         optimizer = optim.Adam([{'params': model.temp_theta[layer]}], lr=lr, weight_decay=wd)
-        for j in range(max_iter[layer]):
+        if layer >= len(max_iter):
+            max_iteration = 10
+        else:
+            max_iteration = max_iter[layer]
+        for j in range(max_iteration):
             epoch_loss = -100
             for X, y in train_loader:
                 X = Variable(X, requires_grad = False)
@@ -142,5 +146,5 @@ def run(monkey = 'A'):
             np.save(f"CMPR_corr_{monkey}",np.asarray(corr))
     np.save(f"CMPR_corr_{monkey}",np.asarray(corr))
         
-run('A')
+#run('A')
 #run('E')

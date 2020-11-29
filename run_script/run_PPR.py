@@ -57,7 +57,7 @@ def eval_func(model, loader, layer):
                 
         return pearsonr(Y, Y_pred)[0]
 
-def train_one(model, data, max_iter = [100,60,50,25,10], epsilon = 1e-6, lr = 1e-3, wd=2e-5, show_every = 10):
+def train_one(model, data, max_iter = [30,30,20,15,10], epsilon = 1e-6, lr = 1e-3, wd=2e-5, show_every = 1000):
         """Note that in my PPR for Tang's data I only used the top stimulus so
            the batch is the entire data but if you want to use other dataset, 8k
            for example, you will need to write your own dataloader in pytorch.
@@ -75,7 +75,11 @@ def train_one(model, data, max_iter = [100,60,50,25,10], epsilon = 1e-6, lr = 1e
             best_filter = None #control overfitting using evaluation set
             best_theta = None
             optimizer = optim.Adam([model.filter[layer], model.theta[layer]], lr=lr, weight_decay=wd)
-            for j in range(max_iter[layer]):
+            if layer >= len(max_iter):
+                max_iteration = 10
+            else:
+                max_iteration = max_iter[layer]
+            for j in range(max_iteration):
                 epoch_loss = 0
                 for X, y in train_loader:
                     X = X.reshape(X.shape[0], model.input_size*model.input_size)

@@ -31,7 +31,7 @@ def check_converge(r1, r2, r3, a, b, c, epsilon=1e-5):
 
 class PPR(nn.Module):
     #a class that performs projection pursuit optimization after selection.
-    def __init__(self, lr = 1e-3, wd = 1e-5, input_size=20, nlayers=5, seed=None):
+    def __init__(self, lr = 1e-3, wd = 1e-5, input_size=20, nlayers=3, seed=None):
         super().__init__()
         if seed is not None:
             torch.manual_seed(seed)
