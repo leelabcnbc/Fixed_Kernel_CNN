@@ -1,6 +1,9 @@
 # Quick start
 
-The pattern data stimulus can be found at ./data/stimuli.zip directory after unzip. Some example neurons for pattern data can be found at ./data/neurons.
+The image stimuli used in the experiments can be found in `./data/stimuli/`. The main experiments were performed on the pattern stimuli, but some additional work mentioned in the discussion and described in the supplementary materials was done on the natural image data.
+
+The neural responses are in `./data/neurons/`. A couple of example neurons for the pattern data are stored, for the purposes of the demo, and the full neural data for each monkey/stimuli set are saved accordingly, all as Numpy arrays.
+
 
 The demo.ipynb file has a step-by-step tutorial of how to use PPR, CPPR, CMPR, FKCNN, GCNN on these neurons.
 
